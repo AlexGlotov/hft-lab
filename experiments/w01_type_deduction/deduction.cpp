@@ -52,6 +52,22 @@ void run_by_ref_checks() {
     by_ref<int[7], int(&)[7]>(array);
 }
 
+// Слот 2: та же связка "T&, массив" из run_by_ref_checks, но на const-массиве
+// символов — показывает, что по ссылке сохраняется и const, и размер
+// одновременно. decltype(name) даёт объявленный тип переменной (T),
+// а decltype((name)) — двойные скобки намеренно! — превращают выражение в
+// lvalue и дают ссылочный тип (тип param в f2), это ровно то различие,
+// в которое легко влететь при написании decltype-проверок вручную.
+void run_array_by_ref_checks() {
+    const char name[] = "hft-lab";
+
+    static_assert(array_size(name) == 8);
+    static_assert(std::is_same_v<decltype(name), const char[8]>);
+    static_assert(std::is_same_v<decltype((name)), const char (&)[8]>);
+
+    by_ref<const char[8], const char (&)[8]>(name);
+}
+
 void run_by_uref_checks() {
     int value = 1;
     const int const_value = 2;
@@ -69,6 +85,7 @@ void run_by_uref_checks() {
 int main() {
     run_by_value_checks();
     run_by_ref_checks();
+    run_array_by_ref_checks();
     run_by_uref_checks();
 
     int seven[7] = {};
