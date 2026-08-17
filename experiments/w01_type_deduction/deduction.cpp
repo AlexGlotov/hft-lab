@@ -52,6 +52,16 @@ void run_by_ref_checks() {
     by_ref<int[7], int(&)[7]>(array);
 }
 
+void run_array_by_ref_checks() {
+    const char name[] = "hft-lab";
+
+    static_assert(array_size(name) == 8);
+    static_assert(std::is_same_v<decltype(name), const char[8]>);
+    static_assert(std::is_same_v<decltype((name)), const char (&)[8]>);
+
+    by_ref<const char[8], const char (&)[8]>(name);
+}
+
 void run_by_uref_checks() {
     int value = 1;
     const int const_value = 2;
@@ -69,6 +79,7 @@ void run_by_uref_checks() {
 int main() {
     run_by_value_checks();
     run_by_ref_checks();
+    run_array_by_ref_checks();
     run_by_uref_checks();
 
     int seven[7] = {};
