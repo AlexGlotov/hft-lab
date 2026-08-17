@@ -1,0 +1,89 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": { "major": 3, "minor": 28, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/${presetName}",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++"
+      }
+    },
+    {
+      "name": "toolchain-gcc14",
+      "hidden": true,
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "g++-14" }
+    },
+    {
+      "name": "toolchain-clang18",
+      "hidden": true,
+      "cacheVariables": { "CMAKE_CXX_COMPILER": "clang++-18" }
+    },
+    {
+      "name": "debug-asan",
+      "inherits": "base",
+      "displayName": "Debug + ASan/UBSan",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer -g",
+        "CMAKE_EXE_LINKER_FLAGS": "-fsanitize=address,undefined",
+        "HFT_LAB_SANITIZERS_ENABLED": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "base",
+      "displayName": "Release",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-O2 -g"
+      }
+    },
+    {
+      "name": "release-native",
+      "inherits": "base",
+      "displayName": "Release (native arch)",
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS": "-O3 -march=native"
+      }
+    },
+    {
+      "name": "debug-asan-gcc14",
+      "inherits": ["toolchain-gcc14", "debug-asan"],
+      "displayName": "Debug + ASan/UBSan (gcc-14)"
+    },
+    {
+      "name": "debug-asan-clang18",
+      "inherits": ["toolchain-clang18", "debug-asan"],
+      "displayName": "Debug + ASan/UBSan (clang-18)"
+    },
+    {
+      "name": "release-gcc14",
+      "inherits": ["toolchain-gcc14", "release"],
+      "displayName": "Release (gcc-14)"
+    },
+    {
+      "name": "release-clang18",
+      "inherits": ["toolchain-clang18", "release"],
+      "displayName": "Release (clang-18)"
+    }
+  ],
+  "buildPresets": [
+    { "name": "debug-asan", "configurePreset": "debug-asan" },
+    { "name": "release", "configurePreset": "release" },
+    { "name": "release-native", "configurePreset": "release-native" },
+    { "name": "debug-asan-gcc14", "configurePreset": "debug-asan-gcc14" },
+    { "name": "debug-asan-clang18", "configurePreset": "debug-asan-clang18" },
+    { "name": "release-gcc14", "configurePreset": "release-gcc14" },
+    { "name": "release-clang18", "configurePreset": "release-clang18" }
+  ],
+  "testPresets": [
+    { "name": "debug-asan", "configurePreset": "debug-asan", "output": { "outputOnFailure": true } },
+    { "name": "release", "configurePreset": "release", "output": { "outputOnFailure": true } },
+    { "name": "release-native", "configurePreset": "release-native", "output": { "outputOnFailure": true } },
+    { "name": "debug-asan-gcc14", "configurePreset": "debug-asan-gcc14", "output": { "outputOnFailure": true } },
+    { "name": "debug-asan-clang18", "configurePreset": "debug-asan-clang18", "output": { "outputOnFailure": true } },
+    { "name": "release-gcc14", "configurePreset": "release-gcc14", "output": { "outputOnFailure": true } },
+    { "name": "release-clang18", "configurePreset": "release-clang18", "output": { "outputOnFailure": true } }
+  ]
+}
