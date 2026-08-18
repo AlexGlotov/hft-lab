@@ -28,11 +28,13 @@ void run_template_deduction_checks() {
 void run_decltype_paren_checks() {
     int x = 0;
     const int cx = 1;
+    int& rx = x;
 
     static_assert(std::is_same_v<decltype(x), int>);
     static_assert(std::is_same_v<decltype((x)), int&>);
     static_assert(std::is_same_v<decltype(cx), const int>);
     static_assert(std::is_same_v<decltype((cx)), const int&>);
+    static_assert(std::is_same_v<decltype(rx), int&>);
 }
 
 }  // namespace
