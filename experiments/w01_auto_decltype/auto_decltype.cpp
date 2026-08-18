@@ -28,6 +28,8 @@ auto plain_auto_return() {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreturn-local-addr"
 #endif
+// P2266R3 (C++23): return (local) — xvalue, decltype(auto) даёт int&&.
+// До C++23 было int&. Ссылка висячая намеренно; функция не вызывается.
 decltype(auto) decltype_auto_return() {
     int local = 0;
     return (local);
@@ -43,6 +45,9 @@ void run_auto_braced_init_checks() {
 
     static_assert(std::is_same_v<decltype(a), std::initializer_list<int>>);
 
+    // N3922 (C++17): auto b{1} выводит int, а не std::initializer_list<int>.
+    // Meyers, Item 2 написан до этого изменения и утверждает обратное.
+    // auto c = {1} (copy-list-init) поведение сохранило.
     static_assert(std::is_same_v<decltype(b), int>);
     static_assert(!std::is_same_v<decltype(b), std::initializer_list<int>>);
 
@@ -58,6 +63,8 @@ void run_template_deduction_checks() {
     constexpr auto generic_lambda = [](auto value) { return value; };
     static_assert(std::is_same_v<decltype(generic_lambda(1)), int>);
 
+    // Шаблонный probe(T) невиден для probe({1,2,3}): T из braced-init-list
+    // не выводится вообще. Выигрывает нешаблонная перегрузка.
     static_assert(probe(1) == 1);
     static_assert(probe({1, 2, 3}) == 2);
 }
