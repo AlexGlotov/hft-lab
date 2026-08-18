@@ -3,3 +3,4 @@ if(HFT_LAB_SANITIZERS_ENABLED)
 endif()
 
 add_subdirectory(w01_type_deduction)
+add_subdirectory(w01_auto_decltype)
