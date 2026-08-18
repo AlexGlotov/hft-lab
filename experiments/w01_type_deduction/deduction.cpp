@@ -62,6 +62,15 @@ void run_array_by_ref_checks() {
     by_ref<const char[8], const char (&)[8]>(name);
 }
 
+void run_pointer_const_checks() {
+    const char name[] = "hft-lab";
+    const char* const ptr = name;
+
+    by_value<const char*, const char*>(name);
+    by_value<const char*, const char*>(ptr);
+    by_ref<const char* const, const char* const&>(ptr);
+}
+
 void run_by_uref_checks() {
     int value = 1;
     const int const_value = 2;
@@ -80,6 +89,7 @@ int main() {
     run_by_value_checks();
     run_by_ref_checks();
     run_array_by_ref_checks();
+    run_pointer_const_checks();
     run_by_uref_checks();
 
     int seven[7] = {};
