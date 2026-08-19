@@ -7,11 +7,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         toolchain: [gcc14, clang18]
         preset: [debug-asan, release]
+    env:
+      DEBIAN_FRONTEND: noninteractive
     steps:
       - uses: actions/checkout@v4
 
@@ -32,4 +35,4 @@ jobs:
         run: cmake --build --preset ${{ matrix.preset }}-${{ matrix.toolchain }}
 
       - name: Test
-        run: ctest --preset ${{ matrix.preset }}-${{ matrix.toolchain }} --output-on-failure
+        run: ctest --preset ${{ matrix.preset }}-${{ matrix.toolchain }} --output-on-failure --timeout 120
