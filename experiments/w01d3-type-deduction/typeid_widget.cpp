@@ -5,13 +5,16 @@
 class Widget {};
 
 template<typename T>
-void f(T param) {
+void f(const T& param) {
     std::printf("typeid(T)     = %s\n", typeid(T).name());
     std::printf("typeid(param) = %s\n", typeid(param).name());
 }
 
+std::vector<Widget> createVec() {
+    return std::vector<Widget>(1);
+}
+
 int main() {
-    std::vector<Widget> vw;
-    vw.push_back(Widget{});
-    f(&vw[0]);
+    const auto vw = createVec();
+    if (!vw.empty()) f(&vw[0]);
 }
