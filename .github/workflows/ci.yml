@@ -22,7 +22,7 @@ jobs:
         run: |
           sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service || true
           sudo systemctl kill --kill-who=all apt-daily.service apt-daily-upgrade.service || true
-          APT_OPTS="-o DPkg::Lock::Timeout=60"
+          APT_OPTS="-o DPkg::Lock::Timeout=60 -o Acquire::Retries=3 -o Acquire::http::Timeout=10 -o Acquire::https::Timeout=10"
           sudo apt-get $APT_OPTS update
           if [ "${{ matrix.toolchain }}" = "gcc14" ]; then
             sudo apt-get $APT_OPTS install -y gcc-14 g++-14
