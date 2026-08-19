@@ -20,13 +20,16 @@ jobs:
 
       - name: Install toolchain
         run: |
-          sudo apt-get update
+          sudo systemctl stop apt-daily.timer apt-daily-upgrade.timer apt-daily.service apt-daily-upgrade.service || true
+          sudo systemctl kill --kill-who=all apt-daily.service apt-daily-upgrade.service || true
+          APT_OPTS="-o DPkg::Lock::Timeout=60"
+          sudo apt-get $APT_OPTS update
           if [ "${{ matrix.toolchain }}" = "gcc14" ]; then
-            sudo apt-get install -y gcc-14 g++-14
+            sudo apt-get $APT_OPTS install -y gcc-14 g++-14
           else
-            sudo apt-get install -y clang-18 clang-tools-18
+            sudo apt-get $APT_OPTS install -y clang-18 clang-tools-18
           fi
-          sudo apt-get install -y ninja-build
+          sudo apt-get $APT_OPTS install -y ninja-build
 
       - name: Configure
         run: cmake --preset ${{ matrix.preset }}-${{ matrix.toolchain }}
