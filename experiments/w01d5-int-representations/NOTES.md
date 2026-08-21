@@ -190,6 +190,44 @@ popcount32(unsigned int):
 
 ## Контрольный вопрос
 
+Реальный текст предупреждения (`mixed_compare.cpp`, `-Wall -Wextra`,
+без `-Werror` — чтобы увидеть оба варнинга сразу, не только первый):
+
+```
+$ g++-14 -std=c++20 -Wall -Wextra -c mixed_compare.cpp -o /dev/null
+mixed_compare.cpp: In function ‘bool cmpUnsignedInt(int, unsigned int)’:
+mixed_compare.cpp:4:14: warning: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Wsign-compare]
+    4 |     return a < b;
+      |            ~~^~~
+mixed_compare.cpp: In function ‘bool cmpUnsignedLong(int, long unsigned int)’:
+mixed_compare.cpp:12:14: warning: comparison of integer expressions of different signedness: ‘int’ and ‘long unsigned int’ [-Wsign-compare]
+   12 |     return a < b;
+      |            ~~^~~
+```
+
+Ровно те же два места, теперь под `-Werror` — реальный провал сборки,
+не «предупреждение стало бы ошибкой»:
+
+```
+$ g++-14 -std=c++20 -Wall -Wextra -Werror -c mixed_compare.cpp -o /dev/null
+mixed_compare.cpp: In function ‘bool cmpUnsignedInt(int, unsigned int)’:
+mixed_compare.cpp:4:14: error: comparison of integer expressions of different signedness: ‘int’ and ‘unsigned int’ [-Werror=sign-compare]
+    4 |     return a < b;
+      |            ~~^~~
+mixed_compare.cpp: In function ‘bool cmpUnsignedLong(int, long unsigned int)’:
+mixed_compare.cpp:12:14: error: comparison of integer expressions of different signedness: ‘int’ and ‘long unsigned int’ [-Werror=sign-compare]
+   12 |     return a < b;
+      |            ~~^~~
+cc1plus: all warnings being treated as errors
+$ echo $?
+1
+```
+
+Про `cmpUnsignedShort` в этом выводе нет ни строчки — и это тоже
+доказательство, а не пропуск: `-Wsign-compare` на неё не сработал
+вообще, ни одного предупреждения на эту функцию нет ни в первом, ни во
+втором прогоне.
+
 `cmp(-1, 1u)` — оба операнда участвуют в usual arithmetic conversions:
 `unsigned int` имеет тот же ранг, что `int`, поэтому по правилам
 стандарта знаковый операнд конвертируется в беззнаковый, а не наоборот
